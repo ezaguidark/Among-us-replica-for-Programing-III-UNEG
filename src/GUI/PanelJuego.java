@@ -11,18 +11,24 @@ public class PanelJuego extends JPanel{
 
     private Partida partida;
     private Mapa mapaActual;
+    private Timer time;
 
     // Constructor para el panel
     public PanelJuego(Partida p) {
         this.partida = p;
         this.mapaActual = partida.getMapaActual();
 
-        // Parámetros para el input:
         this.setFocusable(true);
         this.requestFocusInWindow();
-
         this.addKeyListener(new Teclado(p, this));
 
+        // CREAR EL TIMER
+        // 16ms es aprox 60 FPS (cuadros por segundo)
+        Timer timer = new Timer(16, e -> {
+
+            repaint();
+        });
+        timer.start();
     }
 
     public void cambiarMapa(Mapa nmap) {
@@ -55,20 +61,20 @@ public class PanelJuego extends JPanel{
         for (Jugador j : partida.getJugadores()) {
             if (j.isEstaVivo()){
                 g.setColor(j.getColor());
-                g.fillOval(j.getX(), j.getY(), 100, 100);
+                g.fillOval(j.getX(), j.getY(), j.getAncho(), j.getAlto());
 
 
                 g.setFont(fuente);
                 g.setColor(Color.BLACK);
-                g.drawString(j.getNombre(), j.getX() + 20, j.getY() - 10);
+                g.drawString(j.getNombre(), j.getX() + 10, j.getY() - 10);
             }
             else {
                 g.setColor(Color.RED);
-                g.drawOval(j.getX(), j.getY(), 100, 100);
-                g.drawLine(j.getX(), j.getY(), j.getX() + 100, j.getY() + 100);
-                g.drawLine(j.getX() + 100, j.getY(), j.getX(), j.getY() + 100);
+                g.drawOval(j.getX(), j.getY(), j.getAncho(), j.getAlto());
+                g.drawLine(j.getX(), j.getY(), j.getX() + j.getAncho(), j.getY() + j.getAlto());
+                g.drawLine(j.getX() + j.getAncho(), j.getY(), j.getX(), j.getY() + j.getAlto());
 
-                g.drawString("DEAD: " + j.getNombre(), j.getX() + 20, j.getY() - 10);
+                g.drawString("DEAD: " + j.getNombre(), j.getX() + 10, j.getY() - 10);
             }
         }
 

@@ -34,6 +34,7 @@ public class Teclado extends KeyAdapter{
             case KeyEvent.VK_A -> j1.moverse(-velocidad, 0);
             case KeyEvent.VK_D -> j1.moverse(velocidad, 0);
             case KeyEvent.VK_K -> {
+                // Down casting para usar al Impostor.
                 if(j1 instanceof Impostor){
                     ((Impostor) j1).asesinar();
                     panel.repaint();

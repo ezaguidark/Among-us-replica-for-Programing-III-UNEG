@@ -39,7 +39,7 @@ public class Impostor extends Jugador{
 
                 if (distancia < 65) { // Un poco más que el diámetro del círculo
                     // ¡EJECUCIÓN!
-                    v.estaVivo = false;
+                    v.morir();
 
                     // 4. Lógica extra: Notificar a la consola o sistema
                     System.out.println(v.getNombre() + " a sido asesinado!");

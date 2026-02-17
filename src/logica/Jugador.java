@@ -11,6 +11,8 @@ public abstract class Jugador {
     // recibe un objeto partida, porque se quiere conocer el mapa actual.
     protected Partida partida;
     protected int speed = 15;
+    protected int ancho = 50;
+    protected  int alto = 50;
 
 
     public Jugador(String nombre, Color color, int x, int y, Partida p) {
@@ -24,22 +26,32 @@ public abstract class Jugador {
 
     public void moverse(int dx, int dy) {
         if (estaVivo) {
-            this.x += dx;
-            this.y += dy;
+
+            int nuevaX = this.x + dx;
+            int nuevaY = this.y + dy;
+
             Mapa mapaActual = partida.getMapaActual();
 
-            // Limitar los límites del mapa
-            this.x = Math.max(50, Math.min(this.x , mapaActual.getAncho() - 150));
-            this.y = Math.max(50, Math.min(this.y , mapaActual.getAlto() - 150));
+            nuevaX = Math.max(25, Math.min(nuevaX, mapaActual.getAncho() - 50));
+            nuevaY = Math.max(25, Math.min(nuevaY, mapaActual.getAlto() - 50));
 
+            boolean sup = mapaActual.noColision(nuevaX, nuevaY);
+            boolean der = mapaActual.noColision(nuevaX + ancho, nuevaY);
+            boolean inf = mapaActual.noColision(nuevaX, nuevaY + alto);
+            boolean infD = mapaActual.noColision(nuevaX + ancho, nuevaY + alto);
 
-            // System.out.println("Moviéndose: " + x +" -" + y);
+            if (sup && der && inf && infD) {
+                this.x = nuevaX;
+                this.y = nuevaY;
+            }
         }
     }
 
     public String getNombre() { return nombre; }
 
     public boolean isEstaVivo() { return estaVivo; }
+
+    public void morir(){ estaVivo = false; }
 
     public Color getColor() { return  color;}
 
@@ -57,6 +69,14 @@ public abstract class Jugador {
 
     public void setSpeed(int speed) {
         this.speed = speed;
+    }
+
+    public int getAncho() {
+        return ancho;
+    }
+
+    public int getAlto() {
+        return alto;
     }
 }
 
