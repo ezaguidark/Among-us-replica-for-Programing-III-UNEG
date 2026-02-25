@@ -10,7 +10,7 @@ public abstract class Jugador {
     protected boolean estaVivo;
     // recibe un objeto partida, porque se quiere conocer el mapa actual.
     protected Partida partida;
-    protected int speed = 15;
+    protected int speed = 5;
     protected int ancho = 50;
     protected  int alto = 50;
 
@@ -78,5 +78,7 @@ public abstract class Jugador {
     public int getAlto() {
         return alto;
     }
+
+    public abstract void interactuar(Tarea t);
 }
 

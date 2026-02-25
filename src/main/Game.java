@@ -12,7 +12,7 @@ public class Game {
         System.out.println("Prueba... AmongUS UNEG.");
 
         // objeto mapa
-        Mapa mapaInicial = new Mapa("Villa Asia - Mapa 1", "/col_map.png", "/col_map.png");
+        Mapa mapaInicial = new Mapa("Villa Asia - Mapa 1", "/provisional.jpg", "/col_map.png");
 
         Partida miPartida = new Partida(5, mapaInicial);
 
@@ -30,7 +30,8 @@ public class Game {
             System.out.println(j.getNombre() + " es un " + j.getClass().getSimpleName());
         }
 
-
+        // provisionalmente aqui.
+        miPartida.setGameOver(false);
 
         // Objeto ventana, con partida y el mapa seleccionado.
         VentanaPrincipal ventana = new VentanaPrincipal(miPartida);

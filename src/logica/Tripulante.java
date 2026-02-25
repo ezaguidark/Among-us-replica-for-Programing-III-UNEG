@@ -11,8 +11,13 @@ public class Tripulante extends Jugador{
         this.rol = "Tripulante";
     }
 
-    // Método provisional.
-    public void hacerMision() {
-        tareasCompletadas++;
+
+
+    @Override
+    public void interactuar(Tarea t) {
+        t.progresar();
+        if(t.getProgreso() >= 500){
+            tareasCompletadas++;
+        }
     }
 }

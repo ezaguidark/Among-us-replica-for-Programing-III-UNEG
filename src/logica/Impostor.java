@@ -38,6 +38,7 @@ public class Impostor extends Jugador{
                 double distancia = Math.sqrt(dx * dx + dy * dy);
 
                 if (distancia < 65) { // Un poco más que el diámetro del círculo
+                    kills++;
                     // ¡EJECUCIÓN!
                     v.morir();
 
@@ -51,5 +52,12 @@ public class Impostor extends Jugador{
         }
 
         cooldown = now;
+    }
+
+    @Override
+    public void interactuar(Tarea t) {
+        //t.retroceder();
+        // los impostores también pueden fingir completar tareas
+        t.progresar();
     }
 }
