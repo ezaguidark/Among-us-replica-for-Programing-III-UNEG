@@ -25,27 +25,25 @@ public class Impostor extends Jugador{
         // 1. Obtenemos la lista de posibles víctimas desde la Partida
         ArrayList<Jugador> jugadores = partida.getJugadores();
 
-        for (Jugador v : jugadores) {
+        for (Jugador j : jugadores) {
+
             // 2. Filtros de seguridad:
-            // - No soy yo mismo.
-            // - Es un Tripulante (el impostor no mata a otros impostores).
-            // - Está vivo.
-            if (v != this && v instanceof Tripulante && v.isEstaVivo()) {
+            if (j != this && j instanceof Tripulante && j.isEstaVivo()) {
 
                 // 3. Cálculo de distancia (Rango de ataque)
-                double dx = this.x - v.getX();
-                double dy = this.y - v.getY();
+                double dx = this.x - j.getX();
+                double dy = this.y - j.getY();
                 double distancia = Math.sqrt(dx * dx + dy * dy);
 
                 if (distancia < 65) { // Un poco más que el diámetro del círculo
                     kills++;
-                    // ¡EJECUCIÓN!
-                    v.morir();
+                    // Ejecuta la función
+                    j.morir();
 
                     // 4. Lógica extra: Notificar a la consola o sistema
-                    System.out.println(v.getNombre() + " a sido asesinado!");
+                    System.out.println(j.getNombre() + " a sido asesinado!");
 
-                    // 5. IMPORTANTE: Rompemos el ciclo para no matar a todos los que estén cerca de un solo golpe
+                    // 5. Break para salir del ciclo.
                     break;
                 }
             }

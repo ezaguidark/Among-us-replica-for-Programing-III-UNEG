@@ -4,15 +4,18 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class Mapa {
     private String nombre;
     private BufferedImage background;
     private BufferedImage colMap;
+    private ArrayList<Tarea> tareas = new ArrayList<>();;
 
     public Mapa(String nombre, String rutaVisual, String rutaColision) {
         this.nombre = nombre;
+        inicializarTareas();
         try {
 
             this.background = ImageIO.read(Objects.requireNonNull(getClass().getResource(rutaVisual)));
@@ -23,6 +26,26 @@ public class Mapa {
         }
     }
 
+    // Cada mapa tendrá su lista de tareas en ubicaciones específicas.
+    private void inicializarTareas() {
+
+        // Provisional:
+        if (this.nombre.equals("Villa Asia")) {
+            tareas.add(new Tarea("Programación III", 300, 400));
+            tareas.add(new Tarea("Matemáticas", 1200, 800));
+            tareas.add(new Tarea("Evaluaciones", 1800, 200));
+
+        } else if (this.nombre.equals("Atlantico")) {
+            tareas.add(new Tarea("Química", 500, 200));
+            tareas.add(new Tarea("Física", 1500, 900));
+            tareas.add(new Tarea("Limpiar Tubos", 100, 700));
+        }
+
+    }
+
+    public ArrayList<Tarea> getTareas() {
+        return tareas;
+    }
 
     public boolean noColision(int x, int y) {
         // 1. Validar que no estemos preguntando fuera de la imagen (evita errores)

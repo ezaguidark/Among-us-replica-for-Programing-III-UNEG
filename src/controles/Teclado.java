@@ -3,6 +3,7 @@ package controles;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import GUI.PanelJuego;
 import logica.Impostor;
 import logica.Partida;
 import logica.Jugador;
@@ -13,18 +14,24 @@ import javax.swing.JPanel;
 public class Teclado extends KeyAdapter{
 
     private Partida partida;
-    private JPanel panel;
+    private PanelJuego panel;
     public boolean up, down, left, right, space;
 
     // Recibe el objeto partida para poder tener la lista de jugadores
     // Recibe el panel para poder hacer repaint.
-    public Teclado(Partida partida, JPanel panel) {
-        this.partida = partida;
+    public Teclado(PanelJuego panel) {
+
         this.panel = panel;
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
+        partida = panel.getPartida();
+        Jugador j1 = null;
+        if(partida != null){
+            j1 = partida.getJugadores().get(0);
+        }
+
         switch(e.getKeyCode()) {
             case KeyEvent.VK_W -> up = true;
             case KeyEvent.VK_S -> down = true;
@@ -34,11 +41,37 @@ public class Teclado extends KeyAdapter{
 
             // Las acciones de un solo clic (como matar) se quedan aquí
             case KeyEvent.VK_K -> {
-                Jugador j1 = partida.getJugadores().get(0);
                 if(j1 instanceof Impostor) {
                     ((Impostor) j1).asesinar();
                 }
             }
+            // R para reportar un cuerpo
+            case KeyEvent.VK_R -> {
+                // Nota: poner que el el impostor no pueda reportar xd
+                if (j1 != null && j1.reportar()){
+                    up = down = left = right = false;
+                    partida.iniciarVotacion();
+                }
+            }
+            // En tu clase Teclado
+            case KeyEvent.VK_ENTER -> {
+                if (panel.estadoActual == PanelJuego.Estado.GAME_OVER) {
+                    panel.estadoActual = PanelJuego.Estado.MENU;
+                }
+            }
+
+            case KeyEvent.VK_1 -> {
+                if (panel.estadoActual == PanelJuego.Estado.MENU) {
+                    panel.iniciarPartida(1);
+                }
+            }
+            case KeyEvent.VK_2 -> {
+                if (panel.estadoActual == PanelJuego.Estado.MENU) {
+                    panel.iniciarPartida(2);
+                }
+            }
+
+
         }
     }
 

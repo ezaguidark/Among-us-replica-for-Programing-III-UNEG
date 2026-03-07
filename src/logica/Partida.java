@@ -1,5 +1,8 @@
 package logica;
 
+import GUI.PanelJuego;
+
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -18,7 +21,7 @@ public class Partida {
         this.numeroJugadores = num;
         this.mapaActual = m;
         this.jugadores = new ArrayList<>();
-        this.gameOver = true;
+        this.gameOver = false;
         this.tareas = new ArrayList<>();
         inicializarTareas();
     }
@@ -92,11 +95,65 @@ public class Partida {
     public void inicializarTareas() {
         tareas.clear();
         tareasCompletadas = 0;
-        // Aquí puedes usar un switch dependiendo del nombre del mapaActual
-        if (mapaActual.getNombre().equals("Villa Asia - Mapa 1")) {
-            tareas.add(new Tarea("Programación III", 300, 400));
-            tareas.add(new Tarea("Matemáticas", 1200, 800));
-            tareas.add(new Tarea("Evaluaciones", 1800, 200));
+        tareas = mapaActual.getTareas();
+    }
+
+    public void iniciarVotacion(){
+        System.out.println("¡EMERGENCIA: Cuerpo Encontrado!");
+
+        // 1. Recopilar los nombres de los jugadores VIVOS para las opciones
+        ArrayList<String> sospechosos = new ArrayList<>();
+        for (Jugador j : jugadores) {
+            if (j.isEstaVivo()) {
+                sospechosos.add(j.getNombre());
+            }
+        }
+        sospechosos.add("Omitir Voto");
+
+        // Convertimos la lista a un arreglo de Strings (requisito de JOptionPane)
+        String[] opciones = sospechosos.toArray(new String[0]);
+
+        // 2. Mostrar la ventana de votación
+        // Esto detendrá la ejecución del juego hasta que el jugador haga clic
+        int seleccion = JOptionPane.showOptionDialog(
+                null,
+                "¡Cuerpo encontrado! Elige a un sospechoso: ",
+                "Tiempo de Votar",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.WARNING_MESSAGE,
+                null,
+                opciones,
+                opciones[opciones.length - 1] // Opción por defecto (Omitir)
+        );
+
+        // 3. Procesar el voto
+        if (seleccion >= 0 && seleccion < opciones.length - 1) {
+            // Votaron por un jugador (no eligieron "Omitir" ni cerraron la ventana)
+            String sospechoso = opciones[seleccion];
+
+            for (Jugador j : jugadores) {
+                if (j.getNombre().equals(sospechoso)) {
+                    j.morir(); // ¡Lo expulsamos!
+                    j.expulsar();
+                    System.out.println(j.getNombre() + " fue Expulsado.");
+                    break;
+                }
+            }
+        } else {
+            System.out.println("Nadie fue Expulsado (Voto omitido).");
+        }
+
+        // 4. Limpieza post-reunión
+        reiniciarPosiciones();
+
+    }
+
+    void reiniciarPosiciones(){
+        for(Jugador j : jugadores){
+            if(j.isEstaVivo()){
+                j.setX(j.xi);
+                j.setY(j.yi); // provisional.
+            }
         }
     }
 
@@ -130,6 +187,7 @@ public class Partida {
         return true;
     }
 
+    // Verifica el estado de la partida contando cuantos tripulantes y cuantos impostores hay
     public void verificarEstado() {
         int tripulantesVivos = 0;
         int impostoresVivos = 0;
