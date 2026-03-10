@@ -11,11 +11,14 @@ public class Mapa {
     private String nombre;
     private BufferedImage background;
     private BufferedImage colMap;
-    private ArrayList<Tarea> tareas = new ArrayList<>();;
+    private ArrayList<Tarea> tareas = new ArrayList<>();
+    private ArrayList<Ventilacion> conductos = new ArrayList<>();
+
 
     public Mapa(String nombre, String rutaVisual, String rutaColision) {
         this.nombre = nombre;
         inicializarTareas();
+        colocarVentilaciones();
         try {
 
             this.background = ImageIO.read(Objects.requireNonNull(getClass().getResource(rutaVisual)));
@@ -41,11 +44,49 @@ public class Mapa {
             tareas.add(new Tarea("Sacar Copias", 2900, 200));
 
         } else if (this.nombre.equals("Atlantico")) {
-            tareas.add(new Tarea("Química", 500, 200));
-            tareas.add(new Tarea("Física", 1500, 900));
-            tareas.add(new Tarea("Algebra", 100, 700));
+            tareas.add(new Tarea("Baños", 1850, 1300));
+            tareas.add(new Tarea("Escaleras 1", 3000, 700));
+            tareas.add(new Tarea("Escaleras 2", 250, 1300));
+            tareas.add(new Tarea("Cafetín", 680, 600));
+            tareas.add(new Tarea("Salon UsosMultiples", 900, 1500));
+            tareas.add(new Tarea("Aula 14", 2650, 1350));
         }
 
+    }
+
+
+    private void colocarVentilaciones(){
+        // Provisional:
+        if (this.nombre.equals("Villa Asia")) {
+            Ventilacion v1 = new Ventilacion(330, 500);
+            Ventilacion v2 = new Ventilacion(2550, 200);
+            Ventilacion v3 = new Ventilacion(2500, 1600);
+            Ventilacion v4 = new Ventilacion(1050, 1700);
+
+            v1.setDestino(v2);
+            v2.setDestino(v3);
+            v3.setDestino(v4);
+            v4.setDestino(v1);
+
+            conductos.add(v1); conductos.add(v2); conductos.add(v3); conductos.add(v4);
+
+        } else if (this.nombre.equals("Atlantico")) {
+            Ventilacion v1 = new Ventilacion(260, 400);
+            Ventilacion v2 = new Ventilacion(600, 1500);
+            Ventilacion v3 = new Ventilacion(1850, 1600);
+            Ventilacion v4 = new Ventilacion(3050, 1500);
+
+            v1.setDestino(v2);
+            v2.setDestino(v3);
+            v3.setDestino(v4);
+            v4.setDestino(v1);
+
+            conductos.add(v1); conductos.add(v2); conductos.add(v3); conductos.add(v4);
+        }
+    }
+
+    public ArrayList<Ventilacion> getConductos(){
+        return conductos;
     }
 
     public ArrayList<Tarea> getTareas() {

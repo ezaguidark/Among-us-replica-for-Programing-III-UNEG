@@ -58,4 +58,20 @@ public class Impostor extends Jugador{
         // los impostores también pueden fingir completar tareas
         t.progresar();
     }
+
+    public void entrarConducto(){
+        for (Ventilacion v : partida.getMapaActual().getConductos()){
+            // 3. Cálculo de distancia (Rango de ataque)
+            double dx = this.x - v.getX();
+            double dy = this.y - v.getY();
+            double distancia = Math.sqrt(dx * dx + dy * dy);
+
+            if (distancia < 65){
+                this.x = v.getDestX();
+                this.y = v.getDestY();
+                break;
+            }
+
+        }
+    }
 }

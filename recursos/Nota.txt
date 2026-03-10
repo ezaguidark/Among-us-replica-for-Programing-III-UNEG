@@ -1,4 +1,0 @@
-Probando tamaños para el mapa: 3000 x 2000
-- El personaje debe ser como de 100 px
-
-TODO: crear las imagenes de los mapas finales para poder hacer el mapa de colisiones.

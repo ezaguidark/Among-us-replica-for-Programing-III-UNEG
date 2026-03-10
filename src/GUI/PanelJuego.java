@@ -14,7 +14,7 @@ public class PanelJuego extends JPanel{
     private Mapa mapaActual;
     private Timer time;
     private Jugador yo;
-    public enum Estado { MENU, JUGANDO, GAME_OVER, CONTROLES }
+    public enum Estado { MENU, JUGANDO, GAME_OVER, CONTROLES, INFO }
     private Image fondoMenu, victoria, derrota;
 
     public Estado estadoActual = Estado.MENU;
@@ -67,6 +67,7 @@ public class PanelJuego extends JPanel{
     private void actualizarMovimiento() {
         if (partida.getJugadores().isEmpty()) return;
 
+        yo = partida.getjActual();  // como se agrego cambio de jugador, debe comprobar esto en cada actualización
         Teclado t = (Teclado) this.getKeyListeners()[0]; // Obtenemos el teclado
 
         int dx = 0;
@@ -134,7 +135,7 @@ public class PanelJuego extends JPanel{
 
             g2d.translate(-camX, -camY); // Entramos al mundo
 
-            dibujarMundo(g);
+            dibujarMapa(g);
             dibujarJugadores(g);
 
             g2d.translate(camX, camY); // Salimos del mundo (Reset cámara)
@@ -146,13 +147,18 @@ public class PanelJuego extends JPanel{
         // --- CAPA DE ESTADO ---
         else if (estadoActual == Estado.GAME_OVER) {
             dibujarPantallaFinal(g);
+        } else if (estadoActual == Estado.INFO) {
+            mostrarInfo(g);
         }
     }
 
-    private void dibujarMundo(Graphics g) {
+    private void dibujarMapa(Graphics g) {
         // Dibujamos el fondo del mapa
         g.drawImage(mapaActual.getBackground(), 0, 0, null);
 
+        for (Ventilacion v: mapaActual.getConductos()){
+            v.dibujarIcon(g);
+        }
         // Dibujamos las tareas
         for (Tarea t : partida.getTareas()) {
             if (!t.isCompletada()) {
@@ -254,6 +260,7 @@ public class PanelJuego extends JPanel{
         g.drawString("1. Jugar en Villa Asia", centroX, centroY);
         g.drawString("2. Jugar en Atlántico", centroX, centroY + 60);
         g.drawString("3. Ver Controles", centroX, centroY + 120); // Nueva opción
+        g.drawString("4. Acerca de...", centroX, centroY + 180); // Nueva opción
     }
 
     public void iniciarPartida(int numeroMapa) {
@@ -310,17 +317,48 @@ public class PanelJuego extends JPanel{
 
         g.setColor(Color.WHITE);
 
-        int xIn = getWidth() / 2 - 200;
+        int xIn = getWidth() / 2 - 300;
         int yIn = getHeight() / 2; // la mitad en y
 
         g.setFont(new Font("Arial", Font.BOLD, 40));
-        g.drawString("CONTROLES:", getWidth()/2 - 100, yIn);
+        g.drawString("CONTROLES:", getWidth()/2 - 100, yIn - 50);
 
         g.setFont(new Font("Arial", Font.PLAIN, 30));
-        g.drawString("- WASD: Moverse", xIn, yIn + 60);
-        g.drawString("- Mantener Espacio: Realizar Tarea", xIn, yIn + 100);
-        g.drawString("- K: Eliminar Jugador", xIn, yIn + 140);
-        g.drawString("- R: Reportar Cuerpo", xIn, yIn + 180);
+        g.drawString("- WASD: Moverse", xIn, yIn);
+        g.drawString("- Mantener (Espacio): Realizar Tarea", xIn, yIn + 40);
+        g.drawString("- (K): Eliminar Jugador / Entrar en Ventilación  (Solo Impostores)", xIn, yIn + 80);
+        g.drawString("- (R): Reportar Cuerpo", xIn, yIn + 120);
+        g.drawString("- (SHIFT): Cambiar de Jugador:", xIn, yIn + 160);
+        g.setFont(new Font("Arial", Font.PLAIN, 20));
+        g.drawString("(Para simular multijugador, se puede cambiar y controlar a otro Jugador)", xIn, yIn + 190);
+
+
+        g.setColor(Color.YELLOW);
+        g.drawString("Presiona Enter para volver al menú", getWidth()/2 - 250, getHeight() - 100);
+    }
+
+    private void mostrarInfo(Graphics g) {
+        // 1. Dibujar imagen de fondo
+        if (fondoMenu != null) {
+            g.drawImage(fondoMenu, 0, 0, getWidth(), getHeight(), null);
+            // Oscurecemos un poco el fondo para que el texto se lea mejor
+            g.setColor(new Color(0, 0, 0, 100));
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
+
+        g.setColor(Color.WHITE);
+
+        int xIn = getWidth() / 2 - 300;
+        int yIn = getHeight() / 2; // la mitad en y
+
+        g.setFont(new Font("Arial", Font.BOLD, 40));
+        g.drawString("AMONG US - UNEG:", getWidth()/2 - 100, yIn);
+
+        g.setFont(new Font("Arial", Font.PLAIN, 30));
+        g.drawString("- Proyecto final para Tec. Prog. III", xIn, yIn + 60);
+        g.drawString("- Realizado en Intellij IDEA y JAVA SWING", xIn, yIn + 100);
+        g.drawString("- Creado por: David Ezagui, (...)", xIn, yIn + 140); // poner nombres luego...
+        g.drawString("Marzo, 2026.", xIn, yIn + 180);
 
         g.setColor(Color.YELLOW);
         g.drawString("Presiona Enter para volver al menú", getWidth()/2 - 250, getHeight() - 100);

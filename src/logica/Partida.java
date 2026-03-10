@@ -2,16 +2,19 @@ package logica;
 
 import GUI.PanelJuego;
 
+import javax.rmi.ssl.SslRMIClientSocketFactory;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class Partida {
-    private int numeroJugadores;
+    private int numeroJugadores, jindex = 0;
     private int jugadoresVivos;
     private Mapa mapaActual;
     private ArrayList<Jugador> jugadores;
+    private Jugador jActual;
     private ArrayList<Tarea> tareas;
+    private ArrayList<Ventilacion> conductos;
     private boolean gameOver;
     private String ganador;
     private int tareasCompletadas;
@@ -22,8 +25,9 @@ public class Partida {
         this.mapaActual = m;
         this.jugadores = new ArrayList<>();
         this.gameOver = false;
-        this.tareas = new ArrayList<>();
-        inicializarTareas();
+        this.tareas = mapaActual.getTareas();
+        this.conductos = mapaActual.getConductos();
+        tareasCompletadas = 0;
     }
 
     public int getNumeroJugadores() { return  numeroJugadores;}
@@ -87,15 +91,10 @@ public class Partida {
             jugadores.set(0, swapImpostor(j));
         }
 
-        //Collections.shuffle(jugadores);
+        Collections.shuffle(jugadores);   // <------ temporalmente desactivado para ser siempre el impostor.
 
+        jActual = jugadores.getFirst();
         System.out.println("Roles Asignados!");
-    }
-
-    public void inicializarTareas() {
-        tareas.clear();
-        tareasCompletadas = 0;
-        tareas = mapaActual.getTareas();
     }
 
     public void iniciarVotacion(){
@@ -225,5 +224,28 @@ public class Partida {
 
     public String getGanador(){
         return ganador;
+    }
+
+    public Jugador getjActual() {
+        return jActual;
+    }
+
+    private void cambioIndex(){
+        if (jindex < numeroJugadores - 1){
+            jindex++;
+            System.out.println(jindex);
+        }
+        else {
+            jindex = 0;
+        }
+    }
+
+    // Como no hay multijugador, puedes cambiar entre jugadores para "simular" multijugador
+    public void switchJugador(){
+        cambioIndex();
+        while (!jugadores.get(jindex).isEstaVivo()){
+            cambioIndex();
+        }
+        jActual = jugadores.get(jindex);
     }
 }

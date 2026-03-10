@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Proyecto Final - Among us UNEG:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Proyecto_Final___Among_us_UNEG_jar</output-path>
+    <root id="archive" name="Proyecto Final - Among us UNEG.jar">
+      <element id="module-output" name="Proyecto Final - Among us UNEG" />
+    </root>
+  </artifact>
+</component>
