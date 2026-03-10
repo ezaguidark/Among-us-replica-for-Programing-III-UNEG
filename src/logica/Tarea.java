@@ -3,7 +3,7 @@ package logica;
 public class Tarea {
     private String nombre;
     private int x, y;
-    private int progreso = 0; // 0 a 100
+    private int progreso = 0;
     private boolean completada = false;
 
     public Tarea(String nombre, int x, int y) {
@@ -20,9 +20,9 @@ public class Tarea {
     public String getNombre() { return nombre; }
 
     public void progresar() {
-        if (progreso < 500) {
+        if (progreso < 300) {
             progreso++;
-            if (progreso >= 500){
+            if (progreso >= 300){
                 completada = true;
                 System.out.println("Tarea: " + nombre + " Completada.");
             }

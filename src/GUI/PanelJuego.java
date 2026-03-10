@@ -4,6 +4,8 @@ import logica.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
+
 import controles.Teclado;
 
 public class PanelJuego extends JPanel{
@@ -12,7 +14,8 @@ public class PanelJuego extends JPanel{
     private Mapa mapaActual;
     private Timer time;
     private Jugador yo;
-    public enum Estado { MENU, JUGANDO, GAME_OVER }
+    public enum Estado { MENU, JUGANDO, GAME_OVER, CONTROLES }
+    private Image fondoMenu, victoria, derrota;
 
     public Estado estadoActual = Estado.MENU;
 
@@ -22,6 +25,9 @@ public class PanelJuego extends JPanel{
         // 1. Estado inicial
         this.estadoActual = Estado.MENU;
         this.partida = null; // No hay partida todavía
+        this.fondoMenu = new ImageIcon(Objects.requireNonNull(getClass().getResource("/ImagenMenu.jpg"))).getImage();
+        this.victoria = new ImageIcon(Objects.requireNonNull(getClass().getResource("/victoria.jpg"))).getImage();
+        this.derrota = new ImageIcon(Objects.requireNonNull(getClass().getResource("/derrota.jpg"))).getImage();
 
         // 2. Configuración de pantalla
         this.setFocusable(true);
@@ -72,9 +78,14 @@ public class PanelJuego extends JPanel{
         if (t.left) dx -= v;
         if (t.right) dx += v;
 
+
         // Si hay movimiento en algún eje, movemos al jugador
         if (dx != 0 || dy != 0) {
             yo.moverse(dx, dy);
+            yo.setMoviendose(true);  // se agregó esto para cambiar la animación
+        }
+        else {
+            yo.setMoviendose(false);
         }
     }
 
@@ -103,13 +114,17 @@ public class PanelJuego extends JPanel{
         }
     }
 
-    // Recordatorio: todo lo que sucede en pantalla se actualiza aquí.
+    // Recordatorio: lo que sucede en pantalla se actualiza aquí.
     // por ejemplo, si un jugador cambia a muerto, aquí se verifica y se dibuja.
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if(estadoActual == Estado.MENU){
             dibujarMenu(g);
+
+        } else if (estadoActual == Estado.CONTROLES) {
+            dibujarControles(g);
+
         } else if (estadoActual == Estado.JUGANDO) {
             Graphics2D g2d = (Graphics2D) g;
 
@@ -141,17 +156,19 @@ public class PanelJuego extends JPanel{
         // Dibujamos las tareas
         for (Tarea t : partida.getTareas()) {
             if (!t.isCompletada()) {
-                g.setColor(Color.YELLOW);
+                g.setColor(Color.BLUE);
                 g.fillOval(t.getX(), t.getY(), 40, 40);
 
-                g.setColor(Color.WHITE);
-                g.drawString(t.getNombre(), t.getX(), t.getY() - 10);
+                Font fuente = new Font("Arial", Font.BOLD, 24);
+                g.setFont(fuente);
+                g.setColor(Color.BLACK);
+                g.drawString(t.getNombre(), t.getX() - 30, t.getY() - 20);
 
                 if (t.getProgreso() > 0) {
                     g.setColor(Color.DARK_GRAY);
                     g.fillRect(t.getX() - 30, t.getY() - 25, 100, 10);
                     g.setColor(Color.GREEN);
-                    g.fillRect(t.getX() - 30, t.getY() - 25, t.getProgreso() / 5, 10);
+                    g.fillRect(t.getX() - 30, t.getY() - 25, t.getProgreso() / 3, 10);  // nota: se divide entre 3 porque el total es 300
                 }
             }
         }
@@ -163,17 +180,13 @@ public class PanelJuego extends JPanel{
 
         for (Jugador j : partida.getJugadores()) {
             if (j.isEstaVivo()) {
-                g.setColor(j.getColor());
-                g.fillOval(j.getX(), j.getY(), j.getAncho(), j.getAlto());
+                j.caminarAnim(g);
 
                 g.setColor(Color.BLACK);
                 g.drawString(j.getNombre(), j.getX() - 10, j.getY() - 10);
             } else {
                 // Lógica de cadáveres (X roja y estados)
-                g.setColor(Color.RED);
-                g.drawOval(j.getX(), j.getY(), j.getAncho(), j.getAlto());
-                g.drawLine(j.getX(), j.getY(), j.getX() + j.getAncho(), j.getY() + j.getAlto());
-                g.drawLine(j.getX() + j.getAncho(), j.getY(), j.getX(), j.getY() + j.getAlto());
+                j.dibujarMuerto(g);
 
                 String estadoStr = "";
                 if (j.isReportado()) estadoStr = "REPORTADO: ";
@@ -202,57 +215,76 @@ public class PanelJuego extends JPanel{
     }
 
     private void dibujarPantallaFinal(Graphics g) {
-        g.setColor(new Color(0, 0, 0, 180));
+        g.setColor(new Color(0, 0, 0, 100));
         g.fillRect(0, 0, getWidth(), getHeight());
-
-        g.setColor(Color.RED);
+        if (partida.getGanador().equals("IMPOSTORES")){
+            g.setColor(Color.RED);
+            if (derrota != null) {
+                g.drawImage(derrota, 0, 0, getWidth(), getHeight(), null);
+            }
+        }
+        else{
+            g.setColor(Color.CYAN);
+            if (victoria != null) {
+                g.drawImage(victoria, 0, 0, getWidth(), getHeight(), null);
+            }
+        }
         g.setFont(new Font("Arial", Font.BOLD, 40));
         String mensaje = "VICTORIA: " + partida.getGanador();
-        g.drawString(mensaje, getWidth() / 2 - 150, getHeight() / 2);
-        g.drawString("Presione ''Enter'' para continuar", getWidth()/2 - 100, getHeight()/2 + 60);
+        g.drawString(mensaje, getWidth() / 2 - 250, getHeight() / 2);
+        g.drawString("Presione ''Enter'' para continuar", getWidth()/2 - 250, getHeight()/2 + 60);
     }
 
     private void dibujarMenu(Graphics g) {
-        // Fondo oscuro
-        g.setColor(new Color(20, 20, 40));
-        g.fillRect(0, 0, getWidth(), getHeight());
+        // 1. Dibujar imagen de fondo
+        if (fondoMenu != null) {
+            g.drawImage(fondoMenu, 0, 0, getWidth(), getHeight(), null);
+            // Oscurecemos un poco el fondo para que el texto se lea mejor
+            g.setColor(new Color(0, 0, 0, 100));
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
 
-        // Título principal
+
+        // 3. Opciones
         g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 60));
-        String titulo = "AMONG US UNEG";
-        // Centrar el texto (truco rápido)
-        int anchoTitulo = g.getFontMetrics().stringWidth(titulo);
-        g.drawString(titulo, (getWidth() - anchoTitulo) / 2, getHeight() / 2 - 50);
+        g.setFont(new Font("Arial", Font.PLAIN, 40));
+        int centroX = getWidth() / 2 - 300;
+        int centroY = getHeight() / 2;
 
-        // Instrucciones
-        g.setColor(Color.LIGHT_GRAY);
-        g.setFont(new Font("Arial", Font.PLAIN, 20));
-
-        g.drawString("1. Jugar en Villa Asia", getWidth()/2 - 100, getHeight()/2 + 20);
-        g.drawString("2. Jugar en Laboratorio UNEG", getWidth()/2 - 100, getHeight()/2 + 60);
+        g.drawString("1. Jugar en Villa Asia", centroX, centroY);
+        g.drawString("2. Jugar en Atlántico", centroX, centroY + 60);
+        g.drawString("3. Ver Controles", centroX, centroY + 120); // Nueva opción
     }
 
     public void iniciarPartida(int numeroMapa) {
         Mapa mapaSeleccionado;
         if (numeroMapa == 1) {
-            mapaSeleccionado = new Mapa("Villa Asia", "/provisional.jpg", "/col_map.png");
+            mapaSeleccionado = new Mapa("Villa Asia", "/Villa_Asia.jpg", "/col_map.png");
         } else {
             // Un segundo mapa (puedes usar la misma imagen por ahora si no tienes otra)
-            mapaSeleccionado = new Mapa("Atlantico", "/provisional.jpg", "/col_map.png");
+            mapaSeleccionado = new Mapa("Atlantico", "/Atlantico.jpg", "/col_map_2.png");
         }
 
         // Creamos la partida fresca
-        this.partida = new Partida(5, mapaSeleccionado);
+        this.partida = new Partida(8, mapaSeleccionado);
 
-        // Agregamos a los "bots" de prueba
-        partida.unirsePartida(new Tripulante("Alex", Color.RED, 100, 300, partida));
-        partida.unirsePartida(new Tripulante("Santi", Color.BLUE, 200, 300, partida));
-        partida.unirsePartida(new Tripulante("Maria", Color.GREEN, 300, 300, partida));
-        partida.unirsePartida(new Tripulante("Jose", Color.YELLOW, 400, 300, partida));
-        partida.unirsePartida(new Tripulante("Bello", Color.BLACK, 500, 300, partida)); // ¡Puse un impostor!
+        // Prueba con 6 personas se unen
+
+        partida.unirsePartida(new Tripulante("David", Color.RED, 1300, 240, partida));
+        partida.unirsePartida(new Tripulante("Carlos", Color.BLUE, 1300, 340, partida));
+        partida.unirsePartida(new Tripulante("Maria", Color.GREEN, 1300, 440, partida));
+        partida.unirsePartida(new Tripulante("Rayz", Color.ORANGE, 1300, 540, partida));
+        partida.unirsePartida(new Tripulante("Jose", Color.YELLOW, 1500, 240, partida));
+        partida.unirsePartida(new Tripulante("Pedro", Color.BLACK, 1500, 340, partida));
+        partida.unirsePartida(new Tripulante("Alex", Color.MAGENTA,1500, 440, partida));
+        partida.unirsePartida(new Tripulante("Daniel", Color.CYAN, 1500, 540, partida));
+
 
         partida.prepararJugadores();
+
+        for(Jugador j : partida.getJugadores()) {
+            System.out.println(j.getNombre() + " es un " + j.getClass().getSimpleName());
+        }
 
         // Actualizamos nuestras variables de atajo
         this.mapaActual = partida.getMapaActual();
@@ -265,6 +297,33 @@ public class PanelJuego extends JPanel{
 
     public Partida getPartida(){
         return partida;
+    }
+
+    private void dibujarControles(Graphics g) {
+        // 1. Dibujar imagen de fondo
+        if (fondoMenu != null) {
+            g.drawImage(fondoMenu, 0, 0, getWidth(), getHeight(), null);
+            // Oscurecemos un poco el fondo para que el texto se lea mejor
+            g.setColor(new Color(0, 0, 0, 100));
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
+
+        g.setColor(Color.WHITE);
+
+        int xIn = getWidth() / 2 - 200;
+        int yIn = getHeight() / 2; // la mitad en y
+
+        g.setFont(new Font("Arial", Font.BOLD, 40));
+        g.drawString("CONTROLES:", getWidth()/2 - 100, yIn);
+
+        g.setFont(new Font("Arial", Font.PLAIN, 30));
+        g.drawString("- WASD: Moverse", xIn, yIn + 60);
+        g.drawString("- Mantener Espacio: Realizar Tarea", xIn, yIn + 100);
+        g.drawString("- K: Eliminar Jugador", xIn, yIn + 140);
+        g.drawString("- R: Reportar Cuerpo", xIn, yIn + 180);
+
+        g.setColor(Color.YELLOW);
+        g.drawString("Presiona Enter para volver al menú", getWidth()/2 - 250, getHeight() - 100);
     }
 
 

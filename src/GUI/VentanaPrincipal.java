@@ -17,7 +17,7 @@ public class VentanaPrincipal extends JFrame{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Se crea el panel pasándole la información de la partida.
+        // Se crea el panel
         panel = new PanelJuego();
         add(panel);
     }

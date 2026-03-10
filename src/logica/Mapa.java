@@ -31,14 +31,19 @@ public class Mapa {
 
         // Provisional:
         if (this.nombre.equals("Villa Asia")) {
-            tareas.add(new Tarea("Programación III", 300, 400));
-            tareas.add(new Tarea("Matemáticas", 1200, 800));
-            tareas.add(new Tarea("Evaluaciones", 1800, 200));
+            tareas.add(new Tarea("Aprobar Programación III", 1250, 1430));
+            tareas.add(new Tarea("Ver Matemáticas", 300, 1180));
+            tareas.add(new Tarea("Ir al Baño", 330, 800));
+            tareas.add(new Tarea("Ir a Biblioteca", 1000, 760));
+            tareas.add(new Tarea("Jugar Futbol", 2400, 1400));
+            tareas.add(new Tarea("Coordinación", 1070, 490));
+            tareas.add(new Tarea("Antiguo Comedor", 3000, 1200));
+            tareas.add(new Tarea("Sacar Copias", 2900, 200));
 
         } else if (this.nombre.equals("Atlantico")) {
             tareas.add(new Tarea("Química", 500, 200));
             tareas.add(new Tarea("Física", 1500, 900));
-            tareas.add(new Tarea("Limpiar Tubos", 100, 700));
+            tareas.add(new Tarea("Algebra", 100, 700));
         }
 
     }

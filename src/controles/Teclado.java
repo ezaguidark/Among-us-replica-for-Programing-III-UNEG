@@ -35,8 +35,14 @@ public class Teclado extends KeyAdapter{
         switch(e.getKeyCode()) {
             case KeyEvent.VK_W -> up = true;
             case KeyEvent.VK_S -> down = true;
-            case KeyEvent.VK_A -> left = true;
-            case KeyEvent.VK_D -> right = true;
+            case KeyEvent.VK_A ->{
+                left = true;
+                j1.setDx(-1);
+            }
+            case KeyEvent.VK_D ->{
+                j1.setDx(1);
+                right = true;
+            }
             case KeyEvent.VK_SPACE -> space = true;
 
             // Las acciones de un solo clic (como matar) se quedan aquí
@@ -57,6 +63,8 @@ public class Teclado extends KeyAdapter{
             case KeyEvent.VK_ENTER -> {
                 if (panel.estadoActual == PanelJuego.Estado.GAME_OVER) {
                     panel.estadoActual = PanelJuego.Estado.MENU;
+                } else if (panel.estadoActual == PanelJuego.Estado.CONTROLES) {
+                    panel.estadoActual = PanelJuego.Estado.MENU;
                 }
             }
 
@@ -68,6 +76,12 @@ public class Teclado extends KeyAdapter{
             case KeyEvent.VK_2 -> {
                 if (panel.estadoActual == PanelJuego.Estado.MENU) {
                     panel.iniciarPartida(2);
+                }
+            }
+
+            case KeyEvent.VK_3 -> {
+                if (panel.estadoActual == PanelJuego.Estado.MENU) {
+                    panel.estadoActual = PanelJuego.Estado.CONTROLES;
                 }
             }
 
