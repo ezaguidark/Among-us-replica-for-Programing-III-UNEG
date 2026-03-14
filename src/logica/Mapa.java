@@ -7,14 +7,24 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ * Esta es la clase para el mapa
+ */
 public class Mapa {
     private String nombre;
     private BufferedImage background;
     private BufferedImage colMap;
+    /** El mapa guarda la lista de tareas y sus ubicaciones */
     private ArrayList<Tarea> tareas = new ArrayList<>();
+    /** El mapa guarda su lista de Ventilaciones*/
     private ArrayList<Ventilacion> conductos = new ArrayList<>();
 
-
+    /**
+     * Constructor del objeto mapa
+     * @param nombre identificador
+     * @param rutaVisual ruta de la imagen
+     * @param rutaColision ruta del mapa de colisiones
+     */
     public Mapa(String nombre, String rutaVisual, String rutaColision) {
         this.nombre = nombre;
         inicializarTareas();
@@ -29,7 +39,10 @@ public class Mapa {
         }
     }
 
-    // Cada mapa tendrá su lista de tareas en ubicaciones específicas.
+    /**
+     * Cada mapa tendrá su lista de tareas en ubicaciones específicas.
+     *
+     */
     private void inicializarTareas() {
 
         // Provisional:
@@ -54,7 +67,9 @@ public class Mapa {
 
     }
 
-
+    /**
+     * Inicializa las posiciones de los conductos
+     */
     private void colocarVentilaciones(){
         // Provisional:
         if (this.nombre.equals("Villa Asia")) {
@@ -93,6 +108,12 @@ public class Mapa {
         return tareas;
     }
 
+    /**
+     * Funcion para detectar colisiones
+     * @param x coordenada x
+     * @param y coordenada y
+     * @return
+     */
     public boolean noColision(int x, int y) {
         // 1. Validar que no estemos preguntando fuera de la imagen (evita errores)
         if (x < 0 || y < 0 || x >= getAncho() || y >= getAlto()) {
@@ -103,8 +124,7 @@ public class Mapa {
         int rgb = colMap.getRGB(x, y);
         Color color = new Color(rgb);
 
-        // 3. Si el color es Blanco (o muy cercano al blanco), se puede caminar.
-        // Usamos un umbral de 200 por si el JPG tiene algo de "ruido"
+        // si es blanco se puede caminar
         return color.getRed() > 200 && color.getGreen() > 200 && color.getBlue() > 200;
     }
 

@@ -8,11 +8,14 @@ import java.util.Objects;
 
 import controles.Teclado;
 
+/**
+ * Clase Panel, responsable de mostrar el juego completo, incluido menus.
+ */
 public class PanelJuego extends JPanel{
 
     private Partida partida;
     private Mapa mapaActual;
-    private Timer time;
+    private Timer timer;
     private Jugador yo;
     public enum Estado { MENU, JUGANDO, GAME_OVER, CONTROLES, INFO }
     private Image fondoMenu, victoria, derrota;
@@ -21,6 +24,10 @@ public class PanelJuego extends JPanel{
 
     // Constructor para el panel
     // Constructor del panel (Ahora no recibe nada, empieza en el Menú)
+
+    /**
+     * En el constructor se inicializan varias cosas como el timer, fondos, teclado, etc.
+     */
     public PanelJuego() {
         // 1. Estado inicial
         this.estadoActual = Estado.MENU;
@@ -36,9 +43,8 @@ public class PanelJuego extends JPanel{
         // 3. El teclado ahora solo necesita saber que existe este panel
         this.addKeyListener(new Teclado(this));
 
-        // 4. CREAR EL TIMER
-        // El Timer sigue corriendo siempre para dibujar el menú o el juego
-        Timer timer = new Timer(16, e -> {
+        // El Timer
+        timer = new Timer(16, e -> {
             // Solo intentamos actualizar lógica si estamos jugando y la partida existe
             if (estadoActual == Estado.JUGANDO && partida != null) {
 
@@ -48,11 +54,10 @@ public class PanelJuego extends JPanel{
                     actualizarTareas();
                     partida.verificarEstado();
                 } else {
-                    // Si la lógica de la partida dice Game Over, lo detectamos aquí
                     this.estadoActual = Estado.GAME_OVER;
                 }
             }
-            repaint(); // El repaint SIEMPRE debe ocurrir para actualizar el menú o la pantalla final
+            repaint(); // El repaint siempre debe ocurrir para actualizar el menú o la pantalla final
         });
         timer.start();
     }
@@ -62,8 +67,9 @@ public class PanelJuego extends JPanel{
         repaint(); // función heredada de Jpanel
     }
 
-    // Función para actualizar el movimiento
-    // aumenta las coordenadas en función a la velocidad del jugador.
+    /**
+     * Aumenta las coordenadas en función a la velocidad del jugador.
+     */
     private void actualizarMovimiento() {
         if (partida.getJugadores().isEmpty()) return;
 
@@ -90,7 +96,9 @@ public class PanelJuego extends JPanel{
         }
     }
 
-    // Función que se ejecuta en el timer para actualizar el estado de las tareas
+    /**
+     * Función que se ejecuta en el timer para actualizar el estado de las tareas
+     */
     private void actualizarTareas() {
 
         Teclado tec = (Teclado) this.getKeyListeners()[0]; // Obtenemos el teclado
@@ -117,6 +125,11 @@ public class PanelJuego extends JPanel{
 
     // Recordatorio: lo que sucede en pantalla se actualiza aquí.
     // por ejemplo, si un jugador cambia a muerto, aquí se verifica y se dibuja.
+
+    /**
+     * Funcion principal del Panel, muestra todos los elementos en pantalla
+     * @param g the <code>Graphics</code> object to protect
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -152,6 +165,10 @@ public class PanelJuego extends JPanel{
         }
     }
 
+    /**
+     * Dibuja el mapa y sus elementos
+     * @param g
+     */
     private void dibujarMapa(Graphics g) {
         // Dibujamos el fondo del mapa
         g.drawImage(mapaActual.getBackground(), 0, 0, null);
@@ -180,6 +197,10 @@ public class PanelJuego extends JPanel{
         }
     }
 
+    /**
+     * por cada jugador en la lista de jugadores, lo muestra en pantalla
+     * @param g
+     */
     private void dibujarJugadores(Graphics g) {
         Font fuente = new Font("Arial", Font.BOLD, 24);
         g.setFont(fuente);
@@ -204,6 +225,10 @@ public class PanelJuego extends JPanel{
         }
     }
 
+    /**
+     * un HUD simple, misiones y jugadores
+     * @param g
+     */
     private void dibujarHUD(Graphics g) {
         g.setFont(new Font("Arial", Font.BOLD, 24));
 
@@ -220,6 +245,10 @@ public class PanelJuego extends JPanel{
         g.drawString("Jugadores: " + partida.getJugadoresVivos() + "/" + partida.getNumeroJugadores(), 200, 20);
     }
 
+    /**
+     * Muestra el ganador o el perdedor de la partida
+     * @param g
+     */
     private void dibujarPantallaFinal(Graphics g) {
         g.setColor(new Color(0, 0, 0, 100));
         g.fillRect(0, 0, getWidth(), getHeight());
@@ -241,6 +270,10 @@ public class PanelJuego extends JPanel{
         g.drawString("Presione ''Enter'' para continuar", getWidth()/2 - 250, getHeight()/2 + 60);
     }
 
+    /**
+     * muestra el menu.
+     * @param g
+     */
     private void dibujarMenu(Graphics g) {
         // 1. Dibujar imagen de fondo
         if (fondoMenu != null) {
@@ -263,8 +296,15 @@ public class PanelJuego extends JPanel{
         g.drawString("4. Acerca de...", centroX, centroY + 180); // Nueva opción
     }
 
+    /**
+     * Este metodo determina que mapa se jugara y crea un objeto partido para ese mapa.
+     * @param numeroMapa Seleccion de mapa desde el menu
+     */
     public void iniciarPartida(int numeroMapa) {
         Mapa mapaSeleccionado;
+
+        // Nota: habia creado un metodo para cambiar el mapa, pero partida recibe un objeto mapa en el constructor
+        // es posible remover mapa del constructor y usar ese metodo en su lugar...
         if (numeroMapa == 1) {
             mapaSeleccionado = new Mapa("Villa Asia", "/Villa_Asia.jpg", "/col_map.png");
         } else {
@@ -275,8 +315,8 @@ public class PanelJuego extends JPanel{
         // Creamos la partida fresca
         this.partida = new Partida(8, mapaSeleccionado);
 
-        // Prueba con 6 personas se unen
-
+        // Prueba con 8 personas se unen
+        // Originalmente pensaba en que se podían unir de alguna forma, desde una interface...
         partida.unirsePartida(new Tripulante("David", Color.RED, 1300, 240, partida));
         partida.unirsePartida(new Tripulante("Carlos", Color.BLUE, 1300, 340, partida));
         partida.unirsePartida(new Tripulante("Maria", Color.GREEN, 1300, 440, partida));
@@ -306,6 +346,10 @@ public class PanelJuego extends JPanel{
         return partida;
     }
 
+    /**
+     * pantalla de controles
+     * @param g
+     */
     private void dibujarControles(Graphics g) {
         // 1. Dibujar imagen de fondo
         if (fondoMenu != null) {
@@ -337,6 +381,10 @@ public class PanelJuego extends JPanel{
         g.drawString("Presiona Enter para volver al menú", getWidth()/2 - 250, getHeight() - 100);
     }
 
+    /**
+     * pantalla de acerca de
+     * @param g
+     */
     private void mostrarInfo(Graphics g) {
         // 1. Dibujar imagen de fondo
         if (fondoMenu != null) {

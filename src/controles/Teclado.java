@@ -11,19 +11,28 @@ import logica.Tripulante;
 
 import javax.swing.JPanel;
 
+/**
+ * Clase funcional para los controles
+ */
 public class Teclado extends KeyAdapter{
 
     private Partida partida;
     private PanelJuego panel;
     public boolean up, down, left, right, space, shift, pressK;
 
-    // Recibe el objeto partida para poder tener la lista de jugadores
-    // Recibe el panel para poder hacer repaint.
+    /**
+     * Constructor
+     * @param panel es necesario para obtener variables, etc
+     */
     public Teclado(PanelJuego panel) {
 
         this.panel = panel;
     }
 
+    /**
+     * Se controlan todos los comandos del juego
+     * @param e the event to be processed
+     */
     @Override
     public void keyPressed(KeyEvent e) {
         partida = panel.getPartida();

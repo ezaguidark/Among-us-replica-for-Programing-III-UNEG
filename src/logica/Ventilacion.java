@@ -4,12 +4,21 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
 
+/**
+ * Clase que representa la ventilacion o el conducto del impostor
+ */
 public class Ventilacion {
     private int x, y;
     private int alto, ancho;
     private Image icono;
+    /** debe tener una ventilacion destino */
     private Ventilacion destino;
 
+    /**
+     * Constructor que recibe las coordenadas en el mapa
+     * @param x x pos
+     * @param y y pos
+     */
     public Ventilacion(int x, int y){
         this.x = x;
         this.y = y;

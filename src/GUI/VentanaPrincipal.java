@@ -6,11 +6,13 @@ import logica.Mapa;
 import logica.Tripulante;
 import java.awt.Color;
 
+/**
+ * Ventana principal usando Jframe
+ */
 public class VentanaPrincipal extends JFrame{
 
     private PanelJuego panel;
 
-    // el constructor recibe el panel.
     public VentanaPrincipal() {
         setTitle("Among Us - Villa Asia");
         setSize(1280, 720);

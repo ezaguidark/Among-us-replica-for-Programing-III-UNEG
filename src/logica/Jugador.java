@@ -6,6 +6,9 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ * Clase jugador, consta de varios atributos para su funcionamiento
+ */
 public abstract class Jugador {
     protected String nombre;
     protected String rol;
@@ -21,6 +24,14 @@ public abstract class Jugador {
     protected int anim = 0; // variable para controlar la animación
 
 
+    /**
+     * Constructor de Jugador
+     * @param nombre nombre del jugador
+     * @param color color
+     * @param x pos x
+     * @param y pos y
+     * @param p objeto partida en la que estara
+     */
     public Jugador(String nombre, Color color, int x, int y, Partida p) {
         this.nombre = nombre;
         this.color = color;
@@ -38,6 +49,11 @@ public abstract class Jugador {
         this.frameDead = aplicarColor(frameDead, this.color);
     }
 
+    /**
+     * Metodo para poder moverse
+     * @param dx cambio en x
+     * @param dy cambio en y
+     */
     public void moverse(int dx, int dy) {
         if (estaVivo) {
 
@@ -62,6 +78,10 @@ public abstract class Jugador {
         }
     }
 
+    /**
+     * Metodo para animar el sprite
+     * @param g variable de Panel
+     */
     public void caminarAnim(Graphics g) {
         Image imgActual;
         if (moviendose) {
@@ -82,6 +102,10 @@ public abstract class Jugador {
 
     }
 
+    /**
+     * Metodo para dibujar el sprite correspondiente
+     * @param g variable de Panel
+     */
     public void dibujarMuerto(Graphics g) {
 
         Graphics2D g2d = (Graphics2D) g.create();
@@ -90,6 +114,10 @@ public abstract class Jugador {
         g2d.dispose();
     }
 
+    /**
+     * Al ver un cuerpo, se puede reportar
+     * @return
+     */
     public boolean reportar(){
         ArrayList<Jugador> jugadores = partida.getJugadores();
 
@@ -110,6 +138,12 @@ public abstract class Jugador {
         return false;
     }
 
+    /**
+     * Cambio de color del Sprite
+     * @param original sprite
+     * @param color color destino
+     * @return
+     */
     private Image aplicarColor(Image original, Color color) {
         int w = original.getWidth(null);
         int h = original.getHeight(null);
@@ -119,7 +153,6 @@ public abstract class Jugador {
 
         g2.drawImage(original, 0, 0, null);
 
-        // MÁGIA AQUÍ: Usamos SRC_ATOP con 60% de opacidad (0.6f)
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.6f));
         g2.setColor(color);
         g2.fillRect(0, 0, w, h);
@@ -216,6 +249,10 @@ public abstract class Jugador {
         this.dx = dx;
     }
 
+    /**
+     * Metodo para interactuar con la tarea, se tenia pensado en hacerlo diferente para el impostor
+     * @param t objeto tarea
+     */
     public abstract void interactuar(Tarea t);
 }
 

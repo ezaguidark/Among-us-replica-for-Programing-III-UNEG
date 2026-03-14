@@ -3,18 +3,34 @@ package logica;
 import java.awt.Color;
 import java.util.ArrayList;
 
+/**
+ * Clase para representar al Impostor
+ */
 public class Impostor extends Jugador{
 
     // Atributos mientras tanto:
     private int kills;
+    /** Cooldown para eliminar jugadores */
     private long cooldown = 0;
 
+    /**
+     * Impostor hereda de jugador
+     * @param nombre
+     * @param color
+     * @param x
+     * @param y
+     * @param p
+     */
     public Impostor(String nombre, Color color, int x, int y, Partida p) {
         super(nombre, color, x, y, p);
         this.rol = "Impostor";
         this.kills = 0;
     }
 
+    /**
+     * Metodo principal del impostor, eliminar a los tripulantes
+     *
+     */
     public void asesinar() {
 
         long now = System.currentTimeMillis();
@@ -52,13 +68,20 @@ public class Impostor extends Jugador{
         cooldown = now;
     }
 
+    /**
+     * Se tenía pensado en sabotear tarea, pero el impostor "finge" completar tareas
+     * @param t objeto tarea
+     */
     @Override
     public void interactuar(Tarea t) {
-        //t.retroceder();
+        t.retroceder();
         // los impostores también pueden fingir completar tareas
-        t.progresar();
+        // t.progresar();
     }
 
+    /**
+     * Entrar en un conducto y aparece en otro, previamente definido
+     */
     public void entrarConducto(){
         for (Ventilacion v : partida.getMapaActual().getConductos()){
             // 3. Cálculo de distancia (Rango de ataque)

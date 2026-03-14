@@ -2,6 +2,9 @@ package logica;
 
 import java.awt.Color;
 
+/**
+ * Tripulante extiende de Jugador
+ */
 public class Tripulante extends Jugador{
 
     private int tareasCompletadas = 0;
@@ -11,8 +14,10 @@ public class Tripulante extends Jugador{
         this.rol = "Tripulante";
     }
 
-
-
+    /**
+     * Aumenta el progreso de la tarea
+     * @param t objeto tarea
+     */
     @Override
     public void interactuar(Tarea t) {
         t.progresar();

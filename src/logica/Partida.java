@@ -7,6 +7,9 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * Objeto Partida.
+ */
 public class Partida {
     private int numeroJugadores, jindex = 0;
     private int jugadoresVivos;
@@ -20,6 +23,11 @@ public class Partida {
     private int tareasCompletadas;
 
 
+    /**
+     * constructor de partida
+     * @param num numero de jugadores, minimo 5
+     * @param m Mapa seleccionado
+     */
     public Partida(int num, Mapa m){
         this.numeroJugadores = num;
         this.mapaActual = m;
@@ -57,7 +65,10 @@ public class Partida {
         return jugadoresVivos;
     }
 
-    // Método para unirse a la partida, a la lista de jugadores.
+    /**
+     * Se tenía pensado en usar este metodo para agregar jugadores a una partida ya creada.
+     * @param nuevoJugador Jugador que se unira a la partida.
+     */
     public void unirsePartida(Jugador nuevoJugador){
         if (jugadores.size() < numeroJugadores){
             jugadores.add(nuevoJugador);
@@ -68,18 +79,25 @@ public class Partida {
         }
     }
 
-    // Reemplaza un tripulante con un impostor
+    /**
+     * Reemplaza un tripulante con un impostor
+     * @param j el jugador seleccionado
+     * @return Impostor
+     */
     private Impostor swapImpostor(Jugador j){
         return new Impostor(j.getNombre(), j.getColor(), j.getX(), j.getY(), j.getPartida());
     }
 
-    // Sortea a los jugadores y define a los impostores.
+    /**
+     * Sortea a los jugadores y define a los impostores.
+     */
     public void prepararJugadores(){
         if (jugadores.size() < 5) {
             System.out.println("Faltan jugadores para iniciar.");
             return;
         }
 
+        Collections.shuffle(jugadores);
         // Aunque el enunciado dice que son 2 impostores, si hay solo 5 jugadores, habrá un impostor.
         if (jugadores.size() > 5){
             for (int i = 0; i < 2; i++){
@@ -97,6 +115,9 @@ public class Partida {
         System.out.println("Roles Asignados!");
     }
 
+    /**
+     * Implementa la votacion de jugadores mediante una ventana de Swing
+     */
     public void iniciarVotacion(){
         System.out.println("¡EMERGENCIA: Cuerpo Encontrado!");
 
@@ -147,6 +168,9 @@ public class Partida {
 
     }
 
+    /**
+     * reinicia la posicion de los jugadores
+     */
     void reiniciarPosiciones(){
         for(Jugador j : jugadores){
             if(j.isEstaVivo()){
@@ -168,7 +192,10 @@ public class Partida {
         return tareasCompletadas;
     }
 
-    // Saber si ganaron los Jugadores
+    /**
+     * Saber si ganaron los Jugadores al completar todas las tareas
+     * @return boolean
+     */
     public boolean tareasCompletadas() {
         int c = 0;
 
@@ -186,7 +213,9 @@ public class Partida {
         return true;
     }
 
-    // Verifica el estado de la partida contando cuantos tripulantes y cuantos impostores hay
+    /**
+     * Verifica el estado de la partida contando cuantos tripulantes y cuantos impostores hay
+     */
     public void verificarEstado() {
         int tripulantesVivos = 0;
         int impostoresVivos = 0;
@@ -240,7 +269,9 @@ public class Partida {
         }
     }
 
-    // Como no hay multijugador, puedes cambiar entre jugadores para "simular" multijugador
+    /**
+     * Como no hay multijugador, puedes cambiar entre jugadores para "simular" multijugador
+     */
     public void switchJugador(){
         cambioIndex();
         while (!jugadores.get(jindex).isEstaVivo()){
